@@ -2,11 +2,23 @@
 
 {%block content %}
 	<h1>Please Log In</h1>
-	<form method='POST' action='/userpage'>
-	<tr><td>Email:</td><td><input name='email' type=TEXT with='60'></td></tr>
-	<tr><td>Password:</td><td><input name='password' type=TEXT></td></tr>
-	</table>
-	<p><input value='Login' type='SUBMIT'></p>
+	<form method='POST' action='' novalidate>
+		{{ form.hidden_tag() }}
+		<p>
+			{{ form.username.label }}<br>
+			{{ form.username(size=32) }}<br>
+			{% for error in form.username.errors %}
+			<span style="color: red;">[{{ error }}]</span>
+			{% endfor %}
+		</p>
+		<p>
+			{{ form.password.label }}<br>
+			{{ form.password(size=32) }}<br>
+			{% for error in form.password.errors %}
+			<span style="color: red;">[{{ error }}]</span>
+			{% endfor %}
+		</p>
+		<p>{{ form.remember_me() }} {{ form.remember_me.label }}</p>
+		<p>{{ form.submit() }}</p>
 	</form>
-
 {% endblock %}

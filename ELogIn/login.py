@@ -1,16 +1,16 @@
 from flask import Flask, render_template, request
+from forms import LoginForm
 
 app=Flask(__name__)
+app.config['SECRET_KEY'] = 'you-will-never-guess'
 
-@app.route('/')
-@app.route('/login')
-def log_in():
-	return render_template('login.html')
-
-@app.route('/userpage',methods=['POST'])
-def log_in_success():
-	email=request.form['email']
-	password=request.form['password']
-	return 'You have been successfully logged in as: '+str(email)
-
+@app.route('/', methods=['GET', 'POST'])
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+	form = LoginForm()
+	if form.validate_on_submit():
+		flash('Login requested for user {}, remember_me={}'.format(form.username.data, form.remember_me.data))
+		return redirect('/login')
+	return render_template('login.html', form=form)
+	
 app.run()
