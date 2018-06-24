@@ -1,4 +1,4 @@
-import flask from Flask
+from app import app
 
 @app.route('/index')
 def hello_world():

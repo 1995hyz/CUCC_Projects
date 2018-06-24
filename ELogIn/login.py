@@ -1,8 +1,6 @@
-from flask import Flask, render_template, request
+from flask import render_template
 from forms import LoginForm
-
-app=Flask(__name__)
-app.config['SECRET_KEY'] = 'you-will-never-guess'
+from ELogIn import app
 
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/login', methods=['GET', 'POST'])
@@ -12,5 +10,3 @@ def login():
 		flash('Login requested for user {}, remember_me={}'.format(form.username.data, form.remember_me.data))
 		return redirect('/login')
 	return render_template('login.html', form=form)
-	
-app.run()
