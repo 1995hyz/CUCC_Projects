@@ -1,6 +1,6 @@
 from flask import render_template
-from forms import LoginForm
-from ELogIn import app
+from app.forms import LoginForm
+from app import app
 
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/login', methods=['GET', 'POST'])
