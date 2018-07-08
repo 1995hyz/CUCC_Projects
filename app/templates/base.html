@@ -1,18 +1,30 @@
-<html>
-	<head>
+{% extends 'bootstrap/base.html' %}}
+
+{% block title %}
 		<title>Welcome</title>
-	</head>
-	<body>
-		<div>
-			Microblog:
-			<a href="/index">Home</a>
-			{% if current_user.is_anonymous %}
-			<a href="/login">Login</a>
-			{% else %}
-			<a href="/logout">Logout</a>
-			{% endif %}
+{% endblock %}
+
+{% block navbar %}
+	<nav class="navbar navbar-default">
+		<div class="container">
+	    <div class="navbar-header">
+	      <a class="navbar-brand" href="/home">CUCC</a>
+	    </div>
+	    <ul class="nav navbar-nav">
+	      <li><a href="/home">Home</a></li>
+	    </ul>
+			<ul class="nav navbar-nav navbar-right">
+				{% if current_user.is_anonymous %}
+				<li><a href="/login">Login</a></li>
+				{% else %}
+				<li><a href="/logout">Logout</a></li>
+				{% endif %}
+			</ul>
 		</div>
-		<hr>
+	</nav>
+{% endblock %}
+
+{% block content%}
 		{% with messages = get_flashed_messages() %}
 		{% if messages %}
 		<ul>
@@ -22,6 +34,7 @@
 		</ul>
 		{% endif %}
 		{% endwith %}
-		{% block content%}{% endblock content %}
+		{% block app_content%}{% endblock %}
+{% endblock %}
 	</body>
 </html>
