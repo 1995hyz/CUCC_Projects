@@ -49,4 +49,18 @@ def register():
 		db.session.commit()
 		flash('You have completed the registration.')
 		return redirect('/login')
-	return render_template('/register.html', form=form)
+	return render_template('register.html', form=form)
+
+
+@app.route('/profile')
+@login_required
+def profile():
+	#This function will return the user profile. (Being developed later)
+	return render_template('profile.html')
+
+
+@app.route('/external')
+def external_links():
+	'''This function will redirect to some exteranl links
+	such as ccwiki and CUPS'''
+	return render_template('external.html')
