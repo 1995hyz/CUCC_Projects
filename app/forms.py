@@ -15,9 +15,16 @@ class RegistrationForm(FlaskForm):
 	password = PasswordField('Password', validators=[DataRequired()])
 	password_check = PasswordField(
 	'Re-enter Password', validators=[DataRequired(), EqualTo('password')])
+	last_name = StringField('Last Name', validators=[DataRequired()])
+	first_name = StringField('First Name', validators=[DataRequired()])
 	submit = SubmitField('Register')
 
 	def validate_username(self, username):
 		user = User.query.filter_by(username=username.data).first()
 		if user is not None:
 			raise(ValidationError('The email address has existed.'))
+
+class ProfileForm(FlaskForm):
+	first_name = StringField('First Name', validators=[DataRequired()])
+	last_name = StringField('Last Name', validators=[DataRequired()])
+	
