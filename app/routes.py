@@ -45,7 +45,8 @@ def register():
 	if form.validate_on_submit():
 		user = User(username=form.username.data,
 		 			first_name=form.first_name.data,
-		 			last_name=form.last_name.data)
+		 			last_name=form.last_name.data,
+					privilege=True)
 		user.set_password(form.password.data)
 		db.session.add(user)
 		db.session.commit()
@@ -59,6 +60,12 @@ def register():
 def profile():
 	#This function will return the user profile. (Being developed later)
 	return render_template('profile.html', user=current_user)
+
+
+@app.route('/admin')
+@login_required
+def admin_page():
+	return render_template('admin.html')
 
 
 @app.route('/external')

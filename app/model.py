@@ -11,6 +11,7 @@ class User(UserMixin, db.Model):
     password_hash = db.Column(db.String(128))
     last_name = db.Column(db.String(64))
     first_name = db.Column(db.String(64))
+    privilege = db.Column(db.Boolean())
     posts = db.relationship('Post', backref='author', lazy='dynamic')
 
     def __repr__(self):
