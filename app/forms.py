@@ -27,4 +27,15 @@ class RegistrationForm(FlaskForm):
 class ProfileForm(FlaskForm):
 	first_name = StringField('First Name', validators=[DataRequired()])
 	last_name = StringField('Last Name', validators=[DataRequired()])
-	
+
+
+class ToSupervisorForm(FlaskForm):
+	username = StringField('Change To Supervisor', validators=[DataRequired(),
+	 Email()])
+	submit1 = SubmitField('Submit')
+
+
+class ToOperatorForm(FlaskForm):
+	username = StringField('Change To Operator', validators=[DataRequired(),
+	 Email()])
+	submit2 = SubmitField('Submit')

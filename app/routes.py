@@ -1,5 +1,6 @@
 from flask import render_template, request, redirect, flash
 from app.forms import LoginForm, RegistrationForm
+from app.forms import ToSupervisorForm, ToOperatorForm
 from app import app, db
 from flask_login import current_user , login_user, logout_user, login_required
 from app.model import User
@@ -46,7 +47,7 @@ def register():
 		user = User(username=form.username.data,
 		 			first_name=form.first_name.data,
 		 			last_name=form.last_name.data,
-					privilege=True)
+					privilege=False)
 		user.set_password(form.password.data)
 		db.session.add(user)
 		db.session.commit()
@@ -65,6 +66,9 @@ def profile():
 @app.route('/admin')
 @login_required
 def admin_page():
+	if not current_user.privilege:
+		flash('Only Admin can view the page!')
+		return redirect('/home')
 	return render_template('admin.html')
 
 
@@ -73,3 +77,35 @@ def external_links():
 	'''This function will redirect to some exteranl links
 	such as ccwiki and CUPS'''
 	return render_template('external.html')
+
+
+@app.route('/privilege', methods=['GET', 'POST'])
+@login_required
+def privilege_page():
+	if not current_user.privilege:
+		flash('Only Admin can view the page!')
+		return redirect('/home')
+	form1 = ToSupervisorForm()
+	form2 = ToOperatorForm()
+	if form1.submit1.data and form1.validate_on_submit():
+		user = User.query.filter_by(username=form1.username.data).first()
+		if user:
+			user.privilege = True
+			db.session.commit()
+			flash(user.username + ' has become Supervisor')
+			return redirect('/privilege')
+		else:
+			flash('Invalid Email Account')
+			return redirect('/privilege')
+	if form2.submit2.data and form2.validate_on_submit():
+		user = User.query.filter_by(username=form2.username.data).first()
+		if user:
+			user.privilege = False
+			db.session.commit()
+			flash(user.username + 'has become Operator')
+			return redirect('/privilege')
+		else:
+			flash('Invalid Email Account')
+			return redirect('/privilege')
+	return render_template('privilege.html', user=User.query.all(),
+							form2=form2, form1=form1)
