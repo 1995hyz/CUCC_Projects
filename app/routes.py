@@ -109,3 +109,12 @@ def privilege_page():
 			return redirect('/privilege')
 	return render_template('privilege.html', user=User.query.all(),
 							form2=form2, form1=form1)
+
+
+@app.route('/schedule', methods=['GET', 'POST'])
+@login_required
+def schedule_page():
+	if not current_user.privilege:
+		flash('Only Admin can view the page!')
+		return redirect('/home')
+	return render_template('/schedule.html')

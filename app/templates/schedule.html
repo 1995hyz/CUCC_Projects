@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block head %}
+{{ super() }}
+  {% block scripts %}
+  <script type="text/javascript">
+    function codeAddress() {
+      var checkbox = document.getElementsByName('9-slots');
+      for(var i=0;i<checkbox.length;i++){
+        checkbox[i].disabled = true;
+      }
+    }
+    window.onload = codeAddress;
+  </script>
+  <script src="{{url_for('.static', filename='toggle.js')}}"></script>
+  {% endblock %}
+{% endblock%}
+
+{% block app_content %}
+
+<table>
+  <tr>
+    <th>Time</th>
+    <th>Operator 1</th>
+    <th>Operator 2</th>
+    <th>Operator 3</th>
+    <th>Operator 4</th>
+    <th>Edit</th>
+  </tr>
+  <tr>
+    <th>8:00</th>
+    <th><input id="9-slots-1" name="9-slots" type="text" value="" /></th>
+    <th><input id="9-slots-2" name="9-slots" type="text" value="" /></th>
+    <th><input id="9-slots-3" name="9-slots" type="text" value="" /></th>
+    <th><input id="9-slots-4" name="9-slots" type="text" value="" /></th>
+    <th>
+      <input id="9-check" name="9-check"
+        onClick="toggle('9-check', '9-slots')"
+        type="checkbox" value="0" />
+    </th>
+  </tr>
+</table>
+
+{% endblock %}

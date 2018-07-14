@@ -1,14 +1,15 @@
 {% extends 'bootstrap/base.html' %}}
 
+{% block head %}
 {% block title %}
 		<title>Welcome</title>
 {% endblock %}
 
 {% block styles %}
 {{ super() }}
-<link rel="stylesheet"
-			href="{{url_for('.static', filename='style_profile.css')}}">
+
 {% endblock%}
+{% endblock %}
 
 {% block navbar %}
 	<nav class="navbar navbar-default">
