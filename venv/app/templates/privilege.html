@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block head %}
+  {{ super() }}
+
+{% endblock%}
+
+{% block app_content %}
+
+<table>
+  <tr>
+    <td>Supervisor</td>
+    <td>Email</td>
+  </tr>
+  {% for entry in user %}
+  {% if entry.privilege %}
+  <tr>
+    <td>{{ entry.first_name }} {{ entry.last_name }}</td>
+    <td>{{ entry.username }}</td>
+  </tr>
+  {% endif %}
+  {% endfor %}
+</table>
+<form action="" method='post' novalidate>
+  {{ form1.hidden_tag() }}
+  <p>{{ form1.username.label }}</p>
+  <p>{{ form1.username(size=64, placeholder="Email")}}</p>
+  {% for error in form1.username.errors%}
+  <span style="color: red;">error</span>
+  {% endfor %}
+  <p>{{ form1.submit1() }}</p>
+</form>
+<table>
+  <tr>
+    <td>Operator</td>
+    <td>Email</td>
+  </tr>
+  {% for entry in user %}
+  {% if not entry.privilege %}
+  <tr>
+    <td>{{ entry.first_name }} {{ entry.last_name }}</td>
+    <td>{{ entry.username }}</td>
+  </tr>
+  {% endif %}
+  {% endfor %}
+</table>
+<form action="" method='post' novalidate>
+  {{ form2.hidden_tag() }}
+  <p>{{ form2.username.label }}</p>
+  <p>{{ form2.username(size=64, placeholder="Email")}}</p>
+  {% for error in form2.username.errors%}
+  <span style="color: red;">error</span>
+  {% endfor %}
+  <p>{{ form2.submit2() }}</p>
+</form>
+
+{% endblock %}
