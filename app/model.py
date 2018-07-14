@@ -34,6 +34,16 @@ class Post(db.Model):
         return '<Post {}>'.format(self.body)
 
 
+class Timeslot(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    index = db.Column(db.Integer)   # 0 - 3
+    time = db.Column(db.Integer) # 0 - 23
+    date = db.Column(db.String(32)) # MM/DD/YYYY
+    week = db.Column(db.Integer)    # 0 - 6
+    open = db.Column(db.Boolean())
+    user_id = db.Column(db.String(64))
+
+
 @login.user_loader
 def load_user(id):
     return User.query.get(int(id))

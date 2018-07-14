@@ -3,7 +3,7 @@ from app.forms import LoginForm, RegistrationForm
 from app.forms import ToSupervisorForm, ToOperatorForm
 from app import app, db
 from flask_login import current_user , login_user, logout_user, login_required
-from app.model import User
+from app.model import User, Timeslot
 from werkzeug.urls import url_parse
 
 
@@ -118,3 +118,29 @@ def schedule_page():
 		flash('Only Admin can view the page!')
 		return redirect('/home')
 	return render_template('/schedule.html')
+
+
+@app.route('/week_schedule_m', methods=['GET', 'POST'])
+@login_required
+def week_schedule_monday():
+	if not current_user.privilege:
+		flash('Only Admin can view the page!')
+		return redirect('/home')
+	hours = ['8', '9', '10']
+	orders = ['0', '1', '2', '3']
+	slots = Timeslot.query.filter_by(week=0)
+	slot_dic = {}
+	for slot in slots:
+		key = str(slot.time) + '/' + str(slot.index)
+		slot_dic[key] = slot.open
+	return render_template('/week_schedule_m.html',
+	 						hours=hours, orders=orders, selectable=slot_dic)
+
+
+@app.route('/changed_week', methods=['GET', 'POST'])
+@login_required
+def changed_week():
+	if not current_user.privilege:
+		flash('Only Admin can view the page!')
+		return redirect('/home')
+	return render_template('/changed_week.html')

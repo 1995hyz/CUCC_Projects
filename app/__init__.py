@@ -5,6 +5,7 @@ from flask_migrate import Migrate
 from flask_login import LoginManager
 from flask_bootstrap import Bootstrap
 
+
 app = Flask(__name__)
 app.config.from_object(Config)
 app.config['SECRET_KEY'] = 'you-will-never-guess'
@@ -14,4 +15,7 @@ login = LoginManager(app)
 login.login_view = '/login'
 bootstrap = Bootstrap(app)
 
+
 from app import routes, model
+from app.init_timeslot import create_week
+create_week()
