@@ -4,6 +4,7 @@
 {{ super() }}
   {% block scripts %}
   <script src="{{url_for('.static', filename='confirm_change.js')}}"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
   {% endblock %}
 {% endblock%}
 
@@ -22,7 +23,7 @@
   <tr>
     <th>{{ hour }}:00</th>
     {% for order in orders %}
-    <th><input id="{{ hour }}/{{ order }}" name="checks"
+    <th><input id="{{ hour }}/{{ order }}" name="{{ hour }}/{{ order }}"
                 type="checkbox" value="{{ hour }}/{{ order }}"
                 {% if selectable[hour+'/'+order] %}
                  checked

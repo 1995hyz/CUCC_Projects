@@ -4,7 +4,10 @@ from app.forms import ToSupervisorForm, ToOperatorForm
 from app import app, db
 from flask_login import current_user , login_user, logout_user, login_required
 from app.model import User, Timeslot
+from app.update_schedule import update_week
 from werkzeug.urls import url_parse
+
+import sys, json
 
 
 @app.route('/')
@@ -143,4 +146,23 @@ def changed_week():
 	if not current_user.privilege:
 		flash('Only Admin can view the page!')
 		return redirect('/home')
+	data = request.form['data']
+	decode = json.loads(data)
+	result = ''
+	print(decode, file=sys.stderr)
+	update_week(decode)
 	return render_template('/changed_week.html')
+
+
+@app.route('/test', methods=['POST'])
+def test():
+	data = request.form['data']
+	decode = json.loads(data)
+	result = ''
+	print(decode, file=sys.stderr)
+	update_week(decode)
+	'''for item in data:
+		# loop over every row
+		result += str(item['make']) + '\n'
+	return result'''
+	#return render_template('/test.html')
