@@ -1,5 +1,12 @@
 {% extends "base.html" %}
 
+{% block head %}
+{{ super() }}
+  {% block scripts %}
+  <script src="{{url_for('.static', filename='confirm_change.js')}}"></script>
+  {% endblock %}
+{% endblock%}
+
 {% block app_content %}
 
 <form action="/changed_week" method="post">
@@ -25,6 +32,7 @@
   </tr>
   {% endfor %}
 </table>
-<input id="submit" type="submit" name="submit" value="Submit">
+<input id="submit" type="submit" onclick="return confirm_change()"
+        name="submit" value="Submit" />
 </form>
 {% endblock %}
