@@ -129,7 +129,9 @@ def week_schedule_monday():
 	if not current_user.privilege:
 		flash('Only Admin can view the page!')
 		return redirect('/home')
-	hours = ['8', '9', '10']
+	hours = ['8', '9', '10', '11', '12', '13', '14', '15', '16', '17',
+			'18', '19', '20', '21', '22', '23', '0', '1', '2', '3', '4',
+			'5', '6', '7']
 	orders = ['0', '1', '2', '3']
 	slots = Timeslot.query.filter_by(week=0)
 	slot_dic = {}
@@ -137,6 +139,25 @@ def week_schedule_monday():
 		key = str(slot.time) + '/' + str(slot.index)
 		slot_dic[key] = slot.open
 	return render_template('/week_schedule_m.html',
+	 						hours=hours, orders=orders, selectable=slot_dic)
+
+
+@app.route('/week_schedule_tu', methods=['GET', 'POST'])
+@login_required
+def week_schedule_tuesday():
+	if not current_user.privilege:
+		flash('Only Admin can view the page!')
+		return redirect('/home')
+	hours = ['8', '9', '10', '11', '12', '13', '14', '15', '16', '17',
+			'18', '19', '20', '21', '22', '23', '0', '1', '2', '3', '4',
+			'5', '6', '7']
+	orders = ['0', '1', '2', '3']
+	slots = Timeslot.query.filter_by(week=1)
+	slot_dic = {}
+	for slot in slots:
+		key = str(slot.time) + '/' + str(slot.index)
+		slot_dic[key] = slot.open
+	return render_template('/week_schedule_tu.html',
 	 						hours=hours, orders=orders, selectable=slot_dic)
 
 
@@ -150,7 +171,9 @@ def changed_week():
 	decode = json.loads(data)
 	result = ''
 	print(decode, file=sys.stderr)
-	update_week(decode)
+	week = decode['week']
+	del decode['week']
+	update_week(decode, week=week)
 	return render_template('/changed_week.html')
 
 

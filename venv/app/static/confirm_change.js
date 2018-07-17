@@ -1,7 +1,7 @@
 function doWork() {
   var i, j;
   var dict = {}
-  for(i=8; i<11; i++){
+  for(i=0; i<24; i++){
     for(j=0; j<4; j++){
       var idString = i.toString() + '/' + j.toString()
       if (document.getElementById(idString).checked){
@@ -12,7 +12,29 @@ function doWork() {
       }
     }
   }
-  console.log(dict)
+  switch (document.getElementById("week_index").textContent) {
+    case "Tuesday":
+      dict["week"] = 1;
+      break;
+    case "Wednesday":
+      dict["week"] = 2;
+      break;
+    case "Thursday":
+      dict["week"] = 3;
+      break;
+    case "Friday":
+      dict["week"] = 4;
+      break;
+    case "Saturday":
+      dict["week"] = 5;
+      break;
+    case "Sunday":
+      dict["week"] = 6;
+      break;
+    default:
+      dict['week'] = 0;
+  }
+  console.log(dict);
 // ajax the JSON to the server
 //  var json = '{"result":true, "count":42}';
   var json = JSON.stringify(dict);

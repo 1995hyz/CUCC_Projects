@@ -10,7 +10,7 @@
 
 {% block app_content %}
 
-<h1 id="week_index">Monday</h1>
+<h1 id="week_index">Tuesday</h1>
 <form action="/changed_week" method="post">
 <table>
   <tr>
@@ -36,7 +36,7 @@
 </table>
 <input id="submit" type="submit" onclick="return confirm_change()"
         name="submit" value="Submit" />
-<a href="/week_schedule_su">Sunday</a>
-<a href="/week_schedule_tu">Tuesday</a>
+<a href="/week_schedule_m">Monday</a>
+<a href="/week_schedule_we">Wednesday</a>
 </form>
 {% endblock %}
