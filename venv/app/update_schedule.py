@@ -10,3 +10,12 @@ def update_week(open_dict, week):
         else:
             slot.open = value
             db.session.commit()
+
+
+def get_week(week):
+    slots = Timeslot.query.filter_by(week=week)
+    slots_dic = {}
+    for slot in slots:
+        key = str(slot.time) + '/' + str(slot.index)
+        slots_dic[key] = [slot.open, slot.user_id]
+    return slots_dic

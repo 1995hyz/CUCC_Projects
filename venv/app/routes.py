@@ -4,7 +4,7 @@ from app.forms import ToSupervisorForm, ToOperatorForm
 from app import app, db
 from flask_login import current_user , login_user, logout_user, login_required
 from app.model import User, Timeslot
-from app.update_schedule import update_week
+from app.update_schedule import update_week, get_week
 from werkzeug.urls import url_parse
 
 import sys, json
@@ -114,13 +114,12 @@ def privilege_page():
 							form2=form2, form1=form1)
 
 
-@app.route('/schedule', methods=['GET', 'POST'])
+@app.route('/schedule_m', methods=['GET', 'POST'])
 @login_required
 def schedule_page():
-	if not current_user.privilege:
-		flash('Only Admin can view the page!')
-		return redirect('/home')
-	return render_template('/schedule.html')
+	users_dic = get_week(0)
+	return render_template('/schedule_m.html', users=users_dic,
+	 						hours=['9'], orders=['0', '1', '2', '3'])
 
 
 @app.route('/week_schedule_m', methods=['GET', 'POST'])
@@ -170,7 +169,6 @@ def changed_week():
 	data = request.form['data']
 	decode = json.loads(data)
 	result = ''
-	print(decode, file=sys.stderr)
 	week = decode['week']
 	del decode['week']
 	update_week(decode, week=week)
@@ -182,7 +180,6 @@ def test():
 	data = request.form['data']
 	decode = json.loads(data)
 	result = ''
-	print(decode, file=sys.stderr)
 	update_week(decode)
 	'''for item in data:
 		# loop over every row
