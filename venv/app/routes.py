@@ -128,14 +128,14 @@ def schedule_page(week):
 			'18', '19', '20', '21', '22', '23', '0', '1', '2', '3', '4',
 			'5', '6', '7']
 	orders = ['0', '1', '2', '3']
-	week = [WEEK_LIST[(current_weekday-1)%7], WEEK_LIST[current_weekday], WEEK_LIST[(current_weekday+1)%7]]
-	return render_template('/schedule.html',week=week, users=users_dic,
+	week_list = [WEEK_LIST[(current_weekday-1)%7], WEEK_LIST[current_weekday], WEEK_LIST[(current_weekday+1)%7]]
+	return render_template('/schedule.html',week=week_list, users=users_dic,
 	 						hours=hours, orders=orders)
 
 
-@app.route('/week_schedule_m', methods=['GET', 'POST'])
+@app.route('/week_schedule/<week>', methods=['GET', 'POST'])
 @login_required
-def week_schedule_monday():
+def week_schedule(week):
 	if not current_user.privilege:
 		flash('Only Admin can view the page!')
 		return redirect('/home')
@@ -143,8 +143,10 @@ def week_schedule_monday():
 			'18', '19', '20', '21', '22', '23', '0', '1', '2', '3', '4',
 			'5', '6', '7']
 	orders = ['0', '1', '2', '3']
-	slots_dic = get_open(week=0)
-	return render_template('/week_schedule_m.html',
+	current_weekday = WEEK_MAP[week]
+	slots_dic = get_open(week=current_weekday)
+	week_list = [WEEK_LIST[(current_weekday-1)%7], WEEK_LIST[current_weekday], WEEK_LIST[(current_weekday+1)%7]]
+	return render_template('/week_schedule.html', week=week_list,
 	 						hours=hours, orders=orders, selectable=slots_dic)
 
 
