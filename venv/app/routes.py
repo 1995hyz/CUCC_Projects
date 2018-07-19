@@ -9,6 +9,11 @@ from werkzeug.urls import url_parse
 
 import sys, json
 
+WEEK_MAP = {'Monday': 0, 'Tuesday': 1, 'Wednesday': 2, 'Thursday': 3,
+			'Friday': 4, 'Saturday': 5, 'Sunday': 6}
+WEEK_LIST = ['Monday', 'Tuesday', 'Wednesday', 'Thursday',
+ 				'Friday', 'Saturday', 'Sunday']
+
 
 @app.route('/')
 @app.route('/home')
@@ -114,15 +119,17 @@ def privilege_page():
 							form2=form2, form1=form1)
 
 
-@app.route('/schedule_m', methods=['GET', 'POST'])
+@app.route('/schedule/<week>', methods=['GET', 'POST'])
 @login_required
-def schedule_page():
-	users_dic = get_week(0)
+def schedule_page(week):
+	current_weekday = WEEK_MAP[week]
+	users_dic = get_week(current_weekday)
 	hours = ['8', '9', '10', '11', '12', '13', '14', '15', '16', '17',
 			'18', '19', '20', '21', '22', '23', '0', '1', '2', '3', '4',
 			'5', '6', '7']
 	orders = ['0', '1', '2', '3']
-	return render_template('/schedule_m.html', users=users_dic,
+	week = [WEEK_LIST[(current_weekday-1)%7], WEEK_LIST[current_weekday], WEEK_LIST[(current_weekday+1)%7]]
+	return render_template('/schedule.html',week=week, users=users_dic,
 	 						hours=hours, orders=orders)
 
 
