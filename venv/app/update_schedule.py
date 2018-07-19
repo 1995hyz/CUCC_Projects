@@ -1,4 +1,4 @@
-from app.model import Timeslot
+from app.model import Timeslot, User
 from app import db
 
 def update_week(open_dict, week):
@@ -17,5 +17,9 @@ def get_week(week):
     slots_dic = {}
     for slot in slots:
         key = str(slot.time) + '/' + str(slot.index)
-        slots_dic[key] = [slot.open, slot.user_id]
+        if slot.user_id is not None:
+            user_id = User.query.filter_by(username=slot.user_id).first()
+            slots_dic[key] = [slot.open, user_id]
+        else:
+            slots_dic[key] = [slot.open, slot.user_id]
     return slots_dic

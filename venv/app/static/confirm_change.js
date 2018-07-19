@@ -44,11 +44,17 @@ function doWork() {
 }
 
 
-function confirm_change(){
+function confirm_change(form_index){
   var ok = confirm('Are you sure to change the current schedule?');
-  if (ok){
-    doWork()
-    return true;
+  switch (form_index) {
+    case 1:
+      return false;
+      break;
+    default:
+      if (ok){
+        doWork();
+        return true;
+      }
+      return false;
   }
-  return false;
 }

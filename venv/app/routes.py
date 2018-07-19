@@ -118,8 +118,12 @@ def privilege_page():
 @login_required
 def schedule_page():
 	users_dic = get_week(0)
+	hours = ['8', '9', '10', '11', '12', '13', '14', '15', '16', '17',
+			'18', '19', '20', '21', '22', '23', '0', '1', '2', '3', '4',
+			'5', '6', '7']
+	orders = ['0', '1', '2', '3']
 	return render_template('/schedule_m.html', users=users_dic,
-	 						hours=['9'], orders=['0', '1', '2', '3'])
+	 						hours=hours, orders=orders)
 
 
 @app.route('/week_schedule_m', methods=['GET', 'POST'])
