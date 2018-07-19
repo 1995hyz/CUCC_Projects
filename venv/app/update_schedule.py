@@ -23,3 +23,12 @@ def get_week(week):
         else:
             slots_dic[key] = [slot.open, slot.user_id]
     return slots_dic
+
+
+def get_open(week):
+    slots = Timeslot.query.filter_by(week=week)
+    slots_dic = {}
+    for slot in slots:
+        key = str(slot.time) + '/' +str(slot.index)
+        slots_dic[key] = slot.open
+    return slots_dic

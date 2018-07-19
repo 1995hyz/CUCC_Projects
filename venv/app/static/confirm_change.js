@@ -1,4 +1,5 @@
-function doWork() {
+function doWork(e) {
+  event = e
   var i, j;
   var dict = {}
   for(i=0; i<24; i++){
@@ -44,7 +45,8 @@ function doWork() {
 }
 
 
-function confirm_change(form_index){
+function confirm_change(e, form_index){
+  evt = e || window.event
   var ok = confirm('Are you sure to change the current schedule?');
   switch (form_index) {
     case 1:
@@ -52,7 +54,7 @@ function confirm_change(form_index){
       break;
     default:
       if (ok){
-        doWork();
+        doWork(evt);
         return true;
       }
       return false;

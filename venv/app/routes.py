@@ -4,7 +4,7 @@ from app.forms import ToSupervisorForm, ToOperatorForm
 from app import app, db
 from flask_login import current_user , login_user, logout_user, login_required
 from app.model import User, Timeslot
-from app.update_schedule import update_week, get_week
+from app.update_schedule import update_week, get_week, get_open
 from werkzeug.urls import url_parse
 
 import sys, json
@@ -136,13 +136,9 @@ def week_schedule_monday():
 			'18', '19', '20', '21', '22', '23', '0', '1', '2', '3', '4',
 			'5', '6', '7']
 	orders = ['0', '1', '2', '3']
-	slots = Timeslot.query.filter_by(week=0)
-	slot_dic = {}
-	for slot in slots:
-		key = str(slot.time) + '/' + str(slot.index)
-		slot_dic[key] = slot.open
+	slots_dic = get_open(week=0)
 	return render_template('/week_schedule_m.html',
-	 						hours=hours, orders=orders, selectable=slot_dic)
+	 						hours=hours, orders=orders, selectable=slots_dic)
 
 
 @app.route('/week_schedule_tu', methods=['GET', 'POST'])
@@ -155,13 +151,9 @@ def week_schedule_tuesday():
 			'18', '19', '20', '21', '22', '23', '0', '1', '2', '3', '4',
 			'5', '6', '7']
 	orders = ['0', '1', '2', '3']
-	slots = Timeslot.query.filter_by(week=1)
-	slot_dic = {}
-	for slot in slots:
-		key = str(slot.time) + '/' + str(slot.index)
-		slot_dic[key] = slot.open
+	slots_dic = get_open(week=1)
 	return render_template('/week_schedule_tu.html',
-	 						hours=hours, orders=orders, selectable=slot_dic)
+	 						hours=hours, orders=orders, selectable=slots_dic)
 
 
 @app.route('/changed_week', methods=['GET', 'POST'])
