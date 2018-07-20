@@ -133,6 +133,22 @@ def schedule_page(week):
 	 						hours=hours, orders=orders)
 
 
+@app.route('/schedule_operator/<week>', methods=['GET', 'POST'])
+@login_required
+def schedule_page_operator(week):
+	current_weekday = WEEK_MAP[week]
+	users_dic = get_week(current_weekday)
+	hours = ['8', '9', '10', '11', '12', '13', '14', '15', '16', '17',
+			'18', '19', '20', '21', '22', '23', '0', '1', '2', '3', '4',
+			'5', '6', '7']
+	orders = ['0', '1', '2', '3']
+	week_list = [WEEK_LIST[(current_weekday-1)%7], WEEK_LIST[current_weekday], WEEK_LIST[(current_weekday+1)%7]]
+	current_name = current_user.first_name + ' ' + current_user.last_name
+	print(current_name, file=sys.stderr)
+	return render_template('/schedule_operator.html',week=week_list, users=users_dic,
+	 						hours=hours, orders=orders, current_name=current_name)
+
+
 @app.route('/week_schedule/<week>', methods=['GET', 'POST'])
 @login_required
 def week_schedule(week):
@@ -173,8 +189,9 @@ def changed_schedule():
 	result = ''
 	week = decode['week']
 	del decode['week']
-	update_week_schedule(decode, week=week)
-	print("Should redirect", file=sys.stderr)
+	invalid_dic = update_week_schedule(decode, week=week)
+	if invalid_dic:
+		flash("Wala")
 	return redirect('/schedule/'+WEEK_LIST[week])
 	#return render_template('/changed_week.html')
 

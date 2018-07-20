@@ -43,10 +43,14 @@ def update_week_schedule(slots_dic, week):
         if value == '':
             value = None
         if value != email_dic[slot.user_id]:
-            slot.user_id = name_dic[value]
-            db.session.commit()
+            if value in name_dic:
+                slot.user_id = name_dic[value]
+                db.session.commit()
+            else:
+                invalid_dic[key] = value
         else:
             invalid_dic[key] = value
+    return invalid_dic
 
 
 def get_week(week):
