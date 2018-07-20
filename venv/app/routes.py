@@ -4,7 +4,7 @@ from app.forms import ToSupervisorForm, ToOperatorForm
 from app import app, db
 from flask_login import current_user , login_user, logout_user, login_required
 from app.model import User, Timeslot
-from app.update_schedule import update_week, get_week, get_open
+from app.update_schedule import update_week, get_week, get_open, update_week_schedule
 from werkzeug.urls import url_parse
 
 import sys, json
@@ -150,21 +150,6 @@ def week_schedule(week):
 	 						hours=hours, orders=orders, selectable=slots_dic)
 
 
-@app.route('/week_schedule_tu', methods=['GET', 'POST'])
-@login_required
-def week_schedule_tuesday():
-	if not current_user.privilege:
-		flash('Only Admin can view the page!')
-		return redirect('/home')
-	hours = ['8', '9', '10', '11', '12', '13', '14', '15', '16', '17',
-			'18', '19', '20', '21', '22', '23', '0', '1', '2', '3', '4',
-			'5', '6', '7']
-	orders = ['0', '1', '2', '3']
-	slots_dic = get_open(week=1)
-	return render_template('/week_schedule_tu.html',
-	 						hours=hours, orders=orders, selectable=slots_dic)
-
-
 @app.route('/changed_week', methods=['GET', 'POST'])
 @login_required
 def changed_week():
@@ -177,7 +162,21 @@ def changed_week():
 	week = decode['week']
 	del decode['week']
 	update_week(decode, week=week)
-	return render_template('/changed_week.html')
+	return redirect('/week_schedule/'+WEEK_LIST[week])
+
+
+@app.route('/changed_schedule', methods=['GET', 'POST'])
+@login_required
+def changed_schedule():
+	data = request.form['data']
+	decode = json.loads(data)
+	result = ''
+	week = decode['week']
+	del decode['week']
+	update_week_schedule(decode, week=week)
+	print("Should redirect", file=sys.stderr)
+	return redirect('/schedule/'+WEEK_LIST[week])
+	#return render_template('/changed_week.html')
 
 
 @app.route('/test', methods=['POST'])

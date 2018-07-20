@@ -1,6 +1,25 @@
 from app.model import Timeslot, User
 from app import db
 
+
+def get_name_to_email():
+    name_dic = {}
+    users = User.query.all()
+    for user in users:
+        full_name = user.first_name + ' ' + user.last_name
+        name_dic[full_name] = user.username
+    return name_dic
+
+
+def get_email_to_name():
+    email_dic = {}
+    users = User.query.all()
+    for user in users:
+        full_name = user.first_name + ' ' + user.last_name
+        email_dic[user.username] = full_name
+    return email_dic
+
+
 def update_week(open_dict, week):
     for key, value in open_dict.items():
         hour, index = key.split('/')
@@ -12,14 +31,33 @@ def update_week(open_dict, week):
             db.session.commit()
 
 
+def update_week_schedule(slots_dic, week):
+    email_dic = get_email_to_name()
+    name_dic = get_name_to_email()
+    name_dic[None] = None
+    email_dic[None] = None
+    invalid_dic = {}
+    for key, value in slots_dic.items():
+        hour, index = key.split('/')
+        slot = Timeslot.query.filter_by(week=week, index=index, time=hour).first()
+        if value == '':
+            value = None
+        if value != email_dic[slot.user_id]:
+            slot.user_id = name_dic[value]
+            db.session.commit()
+        else:
+            invalid_dic[key] = value
+
+
 def get_week(week):
     slots = Timeslot.query.filter_by(week=week)
     slots_dic = {}
+    email_dic = get_email_to_name()
     for slot in slots:
         key = str(slot.time) + '/' + str(slot.index)
         if slot.user_id is not None:
-            user_id = User.query.filter_by(username=slot.user_id).first()
-            slots_dic[key] = [slot.open, user_id]
+            name = email_dic[slot.user_id]
+            slots_dic[key] = [slot.open, name]
         else:
             slots_dic[key] = [slot.open, slot.user_id]
     return slots_dic

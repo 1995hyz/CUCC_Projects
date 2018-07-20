@@ -20,6 +20,7 @@
   </script>
   <script src="{{url_for('.static', filename='toggle.js')}}"></script>
   <script src="{{url_for('.static', filename='confirm_change.js')}}"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
   {% endblock %}
 {% endblock%}
 
@@ -61,7 +62,7 @@
   </tr>
   {% endfor %}
 </table>
-<input id="submit" type="submit" onclick="return confirm_change(1)"
+<input id="submit" type="submit" onclick="return confirm_change(event, 1)"
         name="submit" value="Submit" />
 <a href="/schedule/{{ week[0] }}">{{ week[0] }}</a>
 <a href="/schedule/{{ week[2] }}">{{ week[2] }}</a>
