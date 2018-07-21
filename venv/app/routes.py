@@ -189,9 +189,16 @@ def changed_schedule():
 	result = ''
 	week = decode['week']
 	del decode['week']
+	if not current_user.privilege:
+		current_name = current_user.first_name + ' ' + current_user.last_name
+		for key, value in decode.items():
+			if value and value != current_name:
+				flash('Invalid User ' + value + ' at slot ' + key + '!')
+				decode[key] = ''
 	invalid_dic = update_week_schedule(decode, week=week)
 	if invalid_dic:
-		flash("Wala")
+		for key, value in invalid_dic.items():
+			flash('Invalid User ' + value + ' at slot ' + key + '!')
 	return "Random Stuff"#redirect('/schedule/'+WEEK_LIST[week])
 	#return render_template('/changed_week.html')
 

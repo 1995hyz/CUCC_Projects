@@ -101,11 +101,13 @@ function get_schedule_change_operator(e){
     for(j=0; j<4; j++){
       var idString = i.toString() + '/' + j.toString()
       input_context = document.getElementById(idString)
-      if (input_context.value){
-        slots_dic[idString] = input_context.value
-      }
-      else{
-        slots_dic[idString] = ""
+      if (input_context.name == (i.toString() + '-slots')){
+        if (input_context.value){
+          slots_dic[idString] = input_context.value
+        }
+        else{
+          slots_dic[idString] = ""
+        }
       }
     }
   }
@@ -131,7 +133,6 @@ function get_schedule_change_operator(e){
     default:
       slots_dic['week'] = 0;
   }
-  console.log(slots_dic);
 // ajax the JSON to the server
   var json = JSON.stringify(slots_dic);
   $.post("/changed_schedule", {data:json}).done(function(response){

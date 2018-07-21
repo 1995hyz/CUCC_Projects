@@ -47,9 +47,8 @@ def update_week_schedule(slots_dic, week):
                 slot.user_id = name_dic[value]
                 db.session.commit()
             else:
-                invalid_dic[key] = value
-        else:
-            invalid_dic[key] = value
+                if value is not None:
+                    invalid_dic[key] = value
     return invalid_dic
 
 
