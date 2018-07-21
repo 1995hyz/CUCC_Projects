@@ -192,7 +192,7 @@ def changed_schedule():
 	invalid_dic = update_week_schedule(decode, week=week)
 	if invalid_dic:
 		flash("Wala")
-	return redirect('/schedule/'+WEEK_LIST[week])
+	return "Random Stuff"#redirect('/schedule/'+WEEK_LIST[week])
 	#return render_template('/changed_week.html')
 
 

@@ -38,8 +38,10 @@ function doWork(e) {
   console.log(dict);
 // ajax the JSON to the server
   var json = JSON.stringify(dict);
-  $.post("/changed_week", {data:json});
-  //event.preventDefault();
+  $.post("/changed_week", {data:json}).done(function(response){
+    location.reload();
+  });
+  event.preventDefault();
 }
 
 
@@ -84,7 +86,9 @@ function get_schedule_change(e){
   console.log(slots_dic);
 // ajax the JSON to the server
   var json = JSON.stringify(slots_dic);
-  $.post("/changed_schedule", {data:json});
+  $.post("/changed_schedule", {data:json}).done(function(response){
+    location.reload();
+  });
   event.preventDefault();
 }
 
@@ -130,8 +134,10 @@ function get_schedule_change_operator(e){
   console.log(slots_dic);
 // ajax the JSON to the server
   var json = JSON.stringify(slots_dic);
-  $.post("/changed_schedule", {data:json});
-  //event.preventDefault();
+  $.post("/changed_schedule", {data:json}).done(function(response){
+    location.reload();
+  });
+  event.preventDefault();
 }
 
 

@@ -1,5 +1,29 @@
 {% extends 'base.html' %}
 
+{% block head %}
+{{ super() }}
+  {% block scripts %}
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+  <script type="text/javascript">
+  function test(){
+    text = document.getElementById("test_button").textContent;
+    text_dic = {};
+    text_dic['text'] = text;
+    json = JSON.stringify(text_dic)
+  $.ajax({
+    type: "POST",
+    url: '/test',
+    data: json,
+    success: function(){
+      alert("Success!");
+    },
+    dataType: 'json'
+  });
+  }
+  </script>
+  {% endblock %}
+{% endblock%}
+
 {% block app_content %}
-  <h1>Opps, something went wrong! </h1>
+  <button id="test_button" onclick="test()">Click</button>
 {% endblock %}
