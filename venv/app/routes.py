@@ -1,9 +1,9 @@
 from flask import render_template, request, redirect, flash
-from app.forms import LoginForm, RegistrationForm
+from app.forms import LoginForm, RegistrationForm, ScheduleRangeForm
 from app.forms import ToSupervisorForm, ToOperatorForm
 from app import app, db
 from flask_login import current_user , login_user, logout_user, login_required
-from app.model import User, Timeslot
+from app.model import User, Timeslot, ScheduleRange
 from app.update_schedule import update_week, get_week, get_open, update_week_schedule
 from werkzeug.urls import url_parse
 
@@ -129,7 +129,7 @@ def schedule_page(week):
 			'5', '6', '7']
 	orders = ['0', '1', '2', '3', '4']
 	week_list = [WEEK_LIST[(current_weekday-1)%7], WEEK_LIST[current_weekday], WEEK_LIST[(current_weekday+1)%7]]
-	return render_template('/schedule.html',week=week_list, users=users_dic,
+	return render_template('schedule.html',week=week_list, users=users_dic,
 	 						hours=hours, orders=orders)
 
 
@@ -144,7 +144,7 @@ def schedule_page_operator(week):
 	orders = ['0', '1', '2', '3', '4']
 	week_list = [WEEK_LIST[(current_weekday-1)%7], WEEK_LIST[current_weekday], WEEK_LIST[(current_weekday+1)%7]]
 	current_name = current_user.first_name + ' ' + current_user.last_name
-	return render_template('/schedule_operator.html',week=week_list, users=users_dic,
+	return render_template('schedule_operator.html',week=week_list, users=users_dic,
 	 						hours=hours, orders=orders, current_name=current_name)
 
 
@@ -161,7 +161,7 @@ def week_schedule(week):
 	current_weekday = WEEK_MAP[week]
 	slots_dic = get_open(week=current_weekday)
 	week_list = [WEEK_LIST[(current_weekday-1)%7], WEEK_LIST[current_weekday], WEEK_LIST[(current_weekday+1)%7]]
-	return render_template('/week_schedule.html', week=week_list,
+	return render_template('week_schedule.html', week=week_list,
 	 						hours=hours, orders=orders, selectable=slots_dic)
 
 
@@ -200,6 +200,31 @@ def changed_schedule():
 			flash('Invalid User ' + value + ' at slot ' + key + '!')
 	return "Random Stuff"#redirect('/schedule/'+WEEK_LIST[week])
 	#return render_template('/changed_week.html')
+
+
+@app.route('/schedule_range', methods=['GET', 'POST'])
+@login_required
+def changed_schedule_period():
+	if not current_user.privilege:
+		flash('Only Admin can view the page!')
+		return redirect('/home')
+	old_form = ScheduleRange.query.all()
+	if old_form:
+		old_form = old_form[0]
+	else:
+		old_form = None
+	form = ScheduleRangeForm()
+	if form.validate_on_submit():
+		if old_form:
+			old_form.start_date = form.start_date.data
+			old_form.end_date = form.end_date.data
+			db.session.commit()
+		else:
+			date_range = ScheduleRange(start_date=form.start_date.data,
+										end_date=form.end_date.data)
+			db.session.add(date_range)
+			db.session.commit()
+	return render_template('schedule_range.html', old_form=old_form, form=form)
 
 
 @app.route('/test', methods=['POST'])

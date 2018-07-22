@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, SubmitField
+from wtforms import StringField, PasswordField, BooleanField, SubmitField, DateField
 from wtforms.validators import DataRequired, ValidationError, Email, EqualTo
 from app.model import User
 
@@ -39,3 +39,11 @@ class ToOperatorForm(FlaskForm):
 	username = StringField('Change To Operator', validators=[DataRequired(),
 	 Email()])
 	submit2 = SubmitField('Submit')
+
+
+class ScheduleRangeForm(FlaskForm):
+	start_date = DateField('Start Date',format='%m-%d-%Y',
+	 						validators=[DataRequired()])
+	end_date = DateField('End Date', format='%m-%d-%Y',
+	 						validators=[DataRequired()])
+	submit = SubmitField('Submit')
