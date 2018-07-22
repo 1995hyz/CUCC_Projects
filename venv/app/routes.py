@@ -141,10 +141,9 @@ def schedule_page_operator(week):
 	hours = ['8', '9', '10', '11', '12', '13', '14', '15', '16', '17',
 			'18', '19', '20', '21', '22', '23', '0', '1', '2', '3', '4',
 			'5', '6', '7']
-	orders = ['0', '1', '2', '3']
+	orders = ['0', '1', '2', '3', '4']
 	week_list = [WEEK_LIST[(current_weekday-1)%7], WEEK_LIST[current_weekday], WEEK_LIST[(current_weekday+1)%7]]
 	current_name = current_user.first_name + ' ' + current_user.last_name
-	print(current_name, file=sys.stderr)
 	return render_template('/schedule_operator.html',week=week_list, users=users_dic,
 	 						hours=hours, orders=orders, current_name=current_name)
 

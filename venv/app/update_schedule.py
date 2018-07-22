@@ -44,8 +44,16 @@ def update_week_schedule(slots_dic, week):
             value = None
         if value != email_dic[slot.user_id]:
             if value in name_dic:
-                slot.user_id = name_dic[value]
-                db.session.commit()
+                if value is None:
+                    slot.user_id = name_dic[value]
+                    db.session.commit()
+                else:
+                    user = User.query.filter_by(username=name_dic[value]).first()
+                    if (user.privilege and index == str(0)) or (not user.privilege and index != 0): #Check if the new user is supervisor or operator
+                        slot.user_id = name_dic[value]
+                        db.session.commit()
+                    else:
+                        invalid_dic[key] = value
             else:
                 if value is not None:
                     invalid_dic[key] = value
