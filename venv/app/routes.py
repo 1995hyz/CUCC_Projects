@@ -127,7 +127,7 @@ def schedule_page(week):
 	hours = ['8', '9', '10', '11', '12', '13', '14', '15', '16', '17',
 			'18', '19', '20', '21', '22', '23', '0', '1', '2', '3', '4',
 			'5', '6', '7']
-	orders = ['0', '1', '2', '3']
+	orders = ['0', '1', '2', '3', '4']
 	week_list = [WEEK_LIST[(current_weekday-1)%7], WEEK_LIST[current_weekday], WEEK_LIST[(current_weekday+1)%7]]
 	return render_template('/schedule.html',week=week_list, users=users_dic,
 	 						hours=hours, orders=orders)
@@ -158,7 +158,7 @@ def week_schedule(week):
 	hours = ['8', '9', '10', '11', '12', '13', '14', '15', '16', '17',
 			'18', '19', '20', '21', '22', '23', '0', '1', '2', '3', '4',
 			'5', '6', '7']
-	orders = ['0', '1', '2', '3']
+	orders = ['0', '1', '2', '3', '4']
 	current_weekday = WEEK_MAP[week]
 	slots_dic = get_open(week=current_weekday)
 	week_list = [WEEK_LIST[(current_weekday-1)%7], WEEK_LIST[current_weekday], WEEK_LIST[(current_weekday+1)%7]]
