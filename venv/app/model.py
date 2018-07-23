@@ -36,11 +36,19 @@ class Post(db.Model):
 
 class Timeslot(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    index = db.Column(db.Integer)   # 0 - 4, Index 0 is for supervisor
+    index = db.Column(db.Integer) # 0 - 4, Index 0 is for supervisor
     time = db.Column(db.Integer) # 0 - 23
-    date = db.Column(db.String(32)) # MM/DD/YYYY
-    week = db.Column(db.Integer)    # 0 - 6
+    date = db.Column(db.String(32)) # MM-DD-YYYY, Not being used now
+    week = db.Column(db.Integer) # 0 - 6
     open = db.Column(db.Boolean())
+    user_id = db.Column(db.String(64))
+
+
+class DateTimeSlot(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    index = db.Column(db.Integer) # 0 - 4, Index 0 is for supervisor
+    time = db.Column(db.Integer) # 0 - 23
+    date = db.Column(db.String(32)) # MM-DD-YYYY
     user_id = db.Column(db.String(64))
 
 

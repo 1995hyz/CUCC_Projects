@@ -6,6 +6,7 @@ from flask_login import current_user , login_user, logout_user, login_required
 from app.model import User, Timeslot, ScheduleRange
 from app.update_schedule import update_week, get_week, get_open, update_week_schedule
 from werkzeug.urls import url_parse
+from app.update_daily_schedule import convert_date_integer
 
 import sys, json
 
@@ -215,15 +216,18 @@ def changed_schedule_period():
 		old_form = None
 	form = ScheduleRangeForm()
 	if form.validate_on_submit():
-		if old_form:
-			old_form.start_date = form.start_date.data
-			old_form.end_date = form.end_date.data
-			db.session.commit()
+		if convert_date_integer(str(form.start_date.data)) <= convert_date_integer(str(form.end_date.data)):
+			if old_form:
+				old_form.start_date = form.start_date.data
+				old_form.end_date = form.end_date.data
+				db.session.commit()
+			else:
+				date_range = ScheduleRange(start_date=form.start_date.data,
+											end_date=form.end_date.data)
+				db.session.add(date_range)
+				db.session.commit()
 		else:
-			date_range = ScheduleRange(start_date=form.start_date.data,
-										end_date=form.end_date.data)
-			db.session.add(date_range)
-			db.session.commit()
+			flash('End Date Cannot Be Before Start Date')
 	return render_template('schedule_range.html', old_form=old_form, form=form)
 
 
