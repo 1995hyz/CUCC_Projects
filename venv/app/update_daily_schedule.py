@@ -3,36 +3,41 @@ from app import db
 import datetime
 
 
-def convert_date_integer(date):
-    month, day, year = date.split('-')
-    return int(year)*1000 + int(month)*100 + int(day)
-
-
 def convert_from_date(date):
     return str(date.month) + '-' + str(date.day) + '-' + str(date.year)
 
 
-def convert_to_date(date):
+def convert_to_date(date, version):
+    if version == 0:
         month, day, year = date.split('-')
-        return datetime.date(year=year, month=month, day=day)
+        return datetime.date(year=int(year), month=int(month), day=int(day))
+    if version == 1:
+        year, month, day = date.split('-')
+        return datetime.date(year=int(year), month=int(month), day=int(day))
 
 
-def get_update_list(old_start, old_end, new_start, new_end):
-    new_start_day = convert_to_date(new_start)
-    new_end_day = convert_to_date(new_end)
-    old_start_day = convert_to_date(old_start)
-    old_end_day = convert_to_date(old_end)
+def get_update_list(old_start_day, old_end_day, new_start_day, new_end_day):
     delete_list = []
     add_list = []
     all_date = DateTimeSlot.query.all()
     for single_date in all_date:
-        single_day = convert_to_date(single_date.date)
+        single_day = convert_to_date(single_date.date, 1)
         if single_day > new_end_day or single_day < new_start_day:
-            delete_list.append(single_day)
+            if single_day not in delete_list:
+                print('Delete: ' + str(single_day))
+                delete_list.append(single_day)
     position = new_start_day # position serves simliar like single_day above
     while position <= new_end_day:
         if position > old_end_day or position < old_start_day:
+            print('Add: ' + str(position))
             add_list.append(position)
+        try:
+            position = position.replace(day=position.day+1)
+        except ValueError:
+            try:
+                position = position.replace(month=position.month+1, day=1)
+            except ValueError:
+                position = position.replace(year=position.year+1, month=1, day=1)
     return [add_list, delete_list]
 
 
@@ -43,15 +48,16 @@ def update_daily(old_start, old_end, new_start, new_end):
     add_list = temp_list[0]
     delete_list = temp_list[1]
     for old_entry in delete_list:
-        old_date = DateTimeSlot.query.filter_by(date=old_entry)
-        db.session.delete(old_date)
+        old_dates = DateTimeSlot.query.filter_by(date=old_entry)
+        for old_date in old_dates:
+            db.session.delete(old_date)
     db.session.commit()
     for new_entry in add_list:
-        week = convert_to_date(new_entry).weekday()
+        week = new_entry.weekday()
         for hour in hours:
             for order in orders:
                 slot = Timeslot.query.filter_by(week=week, time=hour, index=order).first()
-                date_slot = DateTimeSlot(index=order, time=hour
-                                        , date=new_entry, user_id=slot.user_id)
+                date_slot = DateTimeSlot(index=order, time=hour,
+                                        date=new_entry, user_id=slot.user_id)
                 db.session.add(date_slot)
         db.session.commit()

@@ -6,7 +6,7 @@ from flask_login import current_user , login_user, logout_user, login_required
 from app.model import User, Timeslot, ScheduleRange
 from app.update_schedule import update_week, get_week, get_open, update_week_schedule
 from werkzeug.urls import url_parse
-from app.update_daily_schedule import convert_date_integer
+from app.update_daily_schedule import convert_to_date, update_daily
 
 import sys, json
 
@@ -216,14 +216,17 @@ def changed_schedule_period():
 		old_form = None
 	form = ScheduleRangeForm()
 	if form.validate_on_submit():
-		if convert_date_integer(str(form.start_date.data)) <= convert_date_integer(str(form.end_date.data)):
+		if form.start_date.data <= form.end_date.data:
 			if old_form:
-				old_form.start_date = form.start_date.data
-				old_form.end_date = form.end_date.data
+				update_daily(convert_to_date(old_form.start_date, 0),
+				 			convert_to_date(old_form.end_date, 0),
+				 			form.start_date.data, form.end_date.data)
+				old_form.start_date = form.start_date.data.strftime('%m-%d-%Y')
+				old_form.end_date = form.end_date.data.strftime('%m-%d-%Y')
 				db.session.commit()
 			else:
-				date_range = ScheduleRange(start_date=form.start_date.data,
-											end_date=form.end_date.data)
+				date_range = ScheduleRange(start_date=form.start_date.data.strftime('%m-%d-%Y'),
+											end_date=form.end_date.data.strftime('%m-%d-%Y'))
 				db.session.add(date_range)
 				db.session.commit()
 		else:
