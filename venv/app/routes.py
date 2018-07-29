@@ -8,7 +8,7 @@ from app.update_schedule import update_week, get_week, get_open, update_week_sch
 from werkzeug.urls import url_parse
 from app.update_daily_schedule import convert_to_date, update_daily
 
-import sys, json
+import datetime, json
 
 WEEK_MAP = {'Monday': 0, 'Tuesday': 1, 'Wednesday': 2, 'Thursday': 3,
 			'Friday': 4, 'Saturday': 5, 'Sunday': 6}
@@ -232,6 +232,21 @@ def changed_schedule_period():
 		else:
 			flash('End Date Cannot Be Before Start Date')
 	return render_template('schedule_range.html', old_form=old_form, form=form)
+
+
+@app.route('/date_schedule', methods=['GET', 'POST'])
+@app.route('/date_schedule/<date>', methods=['GET', 'POST'])
+@login_required
+def date_schedule(date=None):
+	if date == None:
+		date = datetime.date.today()
+	current_date = datetime.date.today()
+	schedule_range = ScheduleRange.query.all()
+	if (not schedule_range) or (not (convert_to_date(schedule_range[0].start_date, 0) < current_date < convert_to_date(schedule_range[0].end_date, 0))):
+		flash('Current schedule is not available. Please contact supervisors and come back later')
+		return redirect('/home')
+	else:
+		return render_template('date_schedule.html', date = date.strftime('%m-%d-%Y'))
 
 
 @app.route('/test', methods=['POST'])
