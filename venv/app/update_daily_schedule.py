@@ -1,4 +1,5 @@
 from app.model import Timeslot, User, DateTimeSlot
+from app.update_schedule import get_email_to_name
 from app import db
 import datetime
 
@@ -57,7 +58,23 @@ def update_daily(old_start, old_end, new_start, new_end):
         for hour in hours:
             for order in orders:
                 slot = Timeslot.query.filter_by(week=week, time=hour, index=order).first()
-                date_slot = DateTimeSlot(index=order, time=hour,
+                date_slot = DateTimeSlot(index=order, time=hour, open=slot.open,
                                         date=new_entry, user_id=slot.user_id)
                 db.session.add(date_slot)
         db.session.commit()
+
+
+def get_date(date):
+    slots = DateTimeSlot.query.filter_by(date=date)
+    print(date)
+    slots_dic = {}
+    email_dic = get_email_to_name()
+    for slot in slots:
+        key = str(slot.time) + '/' + str(slot.index)
+        if slot.user_id is not None:
+            name = email_dic[slot.user_id]
+            slots_dic[key] = [slot.open, name]
+        else:
+            slots_dic[key] = [slot.open, slot.user_id]
+    print(slots_dic)
+    return slots_dic

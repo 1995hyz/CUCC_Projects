@@ -1,7 +1,97 @@
 {% extends "base.html" %}
 
+{% block head %}
+{{ super() }}
+  {% block scripts %}
+  <script type="text/javascript">
+    function codeAddress() {
+      for (var j=0; j<24; j++){
+        var checkbox = document.getElementsByName(j.toString()+"-slots");
+        for(var i=0;i<checkbox.length;i++){
+          checkbox[i].disabled = true;
+        }
+        var checkbox2 = document.getElementsByName(j.toString()+"-slots-disabled");
+        for(var i=0;i<checkbox2.length;i++){
+          checkbox2[i].disabled = true;
+        }
+        var day = new Date();
+        current_hour = day.getHours();
+        for (var m=0; m<=current_hour; m++){
+          for (var n=0; n<5; n++){
+            var checkbox3 = document.getElementById(m.toString()+"/"+n.toString());
+            checkbox3.disabled = true; //Disable All Passed Hours in a day
+          }
+        }
+      }
+    }
+    window.onload = codeAddress;
+  </script>
+  <script src="{{url_for('.static', filename='toggle.js')}}"></script>
+  <script src="{{url_for('.static', filename='confirm_change.js')}}"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+  {% endblock %}
+{% endblock%}
+
 {% block app_content %}
 
-<h1 id="date_index">{{ date }}</h1>
-
+<h1 id="date_index">{{ date[1] }}</h1>
+<form action="" method="post">
+<table>
+  <tr>
+    <th>Time</th>
+    <th>Supervisor</th>
+    <th>Operator 1</th>
+    <th>Operator 2</th>
+    <th>Operator 3</th>
+    <th>Operator 4</th>
+    <th>Edit</th>
+  </tr>
+  {% for hour in hours %}
+  <tr>
+    <th>{{ hour }}:00</th>
+    {% if users[hour+'/'+orders[0]][0] %}
+      {% if users[hour+'/'+orders[0]][1] is none %}
+      <th><input id="{{ hour }}/{{ orders[0] }}" name="{{hour}}-slots-disabled"
+                  type="text" value="" style="background-color: #41ebf4;" /></th>
+      {% else %}
+      <th><input id="{{ hour }}/{{ orders[0] }}" name="{{hour}}-slots-disabled"
+                  type="text" value="{{ users[hour+'/'+orders[0]][1] }}"
+                  style="background-color: #a1f442;" /></th>
+      {% endif %}
+    {% else %}
+    <th><input id="{{ hour }}/{{ orders[0] }}" name="{{hour}}-slots-disabled" type="text" value="" /></th>
+    {% endif %}
+    {% for order in orders[1:] %}
+    {% if users[hour+'/'+order][0] %}
+      {% if users[hour+'/'+order][1] is none %}
+      <th><input id="{{ hour }}/{{ order }}" name="{{hour}}-slots"
+                    type="text" value="" style="background-color: #41ebf4;" /></th>
+      {% elif users[hour+'/'+order][1] == current_name %}
+      <th><input id="{{ hour }}/{{ order }}" name="{{hour}}-slots"
+                    type="text" value="{{ users[hour+'/'+order][1] }}"
+                    style="background-color: #05680d;" /></th>
+      {% else %}
+      <th><input id="{{ hour }}/{{ order }}" name="{{hour}}-slots-disabled"
+                    type="text" value="{{ users[hour+'/'+order][1] }}"
+                    style="background-color: #a1f442;" /></th>
+      {% endif %}
+    {% else %}
+    <th><input id="{{ hour }}/{{ order }}" name="{{hour}}-slots-disabled" type="text" value="" /></th>
+    {% endif %}
+    {% endfor %}
+    <th>
+      <input id="{{ hour }}-check" name="{{ hour }}-check"
+        onClick="toggle('{{ hour }}-check', '{{ hour }}-slots')"
+        type="checkbox" value="0" />
+    </th>
+  </tr>
+  {% endfor %}
+</table>
+{% if submit %}
+<input id="submit" type="submit" onclick="return confirm_change(event, 3)"
+        name="submit" value="Submit" />
+{% endif %}
+<a href="/date_schedule/{{ date[0] }}">{{ date[0] }}</a>
+<a href="/date_schedule/{{ date[2] }}">{{ date[2] }}</a>
+</form>
 {% endblock %}

@@ -6,7 +6,7 @@ from flask_login import current_user , login_user, logout_user, login_required
 from app.model import User, Timeslot, ScheduleRange
 from app.update_schedule import update_week, get_week, get_open, update_week_schedule
 from werkzeug.urls import url_parse
-from app.update_daily_schedule import convert_to_date, update_daily
+from app.update_daily_schedule import convert_to_date, update_daily, get_date
 
 import datetime, json
 
@@ -239,14 +239,29 @@ def changed_schedule_period():
 @login_required
 def date_schedule(date=None):
 	if date == None:
-		date = datetime.date.today()
+		date = datetime.date.today().strftime('%Y-%m-%d')
+	else:
+		date = convert_to_date(date, 0).strftime('%Y-%m-%d')
 	current_date = datetime.date.today()
 	schedule_range = ScheduleRange.query.all()
 	if (not schedule_range) or (not (convert_to_date(schedule_range[0].start_date, 0) < current_date < convert_to_date(schedule_range[0].end_date, 0))):
 		flash('Current schedule is not available. Please contact supervisors and come back later')
 		return redirect('/home')
 	else:
-		return render_template('date_schedule.html', date = date.strftime('%m-%d-%Y'))
+		hours = ['8', '9', '10', '11', '12', '13', '14', '15', '16', '17',
+				'18', '19', '20', '21', '22', '23', '0', '1', '2', '3', '4',
+				'5', '6', '7']
+		orders = ['0', '1', '2', '3', '4']
+		users_dic = get_date(date)
+		print(users_dic)
+		date_list = [(convert_to_date(date, 1)-datetime.timedelta(days=1)).strftime('%m-%d-%Y'),
+					date, (convert_to_date(date, 1)+datetime.timedelta(days=1)).strftime('%m-%d-%Y')]
+		submit = False
+		if convert_to_date(date, 1) >= datetime.date.today():
+			submit = True
+		return render_template('date_schedule.html', date = date_list,
+								hours=hours, orders=orders, users=users_dic,
+								submit=submit)
 
 
 @app.route('/test', methods=['POST'])

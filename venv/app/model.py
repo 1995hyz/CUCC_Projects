@@ -49,6 +49,7 @@ class DateTimeSlot(db.Model):
     index = db.Column(db.Integer) # 0 - 4, Index 0 is for supervisor
     time = db.Column(db.Integer) # 0 - 23
     date = db.Column(db.String(32)) # MM-DD-YYYY
+    open = db.Column(db.Boolean())
     user_id = db.Column(db.String(64))
 
 
