@@ -5,6 +5,7 @@ from app import app, db
 from flask_login import current_user , login_user, logout_user, login_required
 from app.model import User, Timeslot, ScheduleRange
 from app.update_schedule import update_week, get_week, get_open, update_week_schedule
+from app.update_daily_schedule import update_date_schedule
 from werkzeug.urls import url_parse
 from app.update_daily_schedule import convert_to_date, update_daily, get_date
 
@@ -174,7 +175,6 @@ def changed_week():
 		return redirect('/home')
 	data = request.form['data']
 	decode = json.loads(data)
-	result = ''
 	week = decode['week']
 	del decode['week']
 	update_week(decode, week=week)
@@ -186,7 +186,6 @@ def changed_week():
 def changed_schedule():
 	data = request.form['data']
 	decode = json.loads(data)
-	result = ''
 	week = decode['week']
 	del decode['week']
 	if not current_user.privilege:
@@ -201,6 +200,28 @@ def changed_schedule():
 			flash('Invalid User ' + value + ' at slot ' + key + '!')
 	return "Random Stuff"#redirect('/schedule/'+WEEK_LIST[week])
 	#return render_template('/changed_week.html')
+
+
+@app.route('/changed_date', methods=['GET', 'POST'])
+@login_required
+def changed_date():
+	data = request.form['data']
+	decode = json.loads(data)
+	date = convert_to_date(decode['date'], 0).strftime('%Y-%m-%d')
+	delete_list = []
+	del decode['date']
+	current_name = current_user.first_name + ' ' + current_user.last_name
+	for key, value in decode.items():
+		if value and value != current_name:
+			flash('Invalid User ' + value + ' at slot ' + key + '!')
+			delete_list.append(key)
+	for entry in delete_list:
+		del decode[key]
+	invalid_dic = update_date_schedule(decode, date=date)
+	if invalid_dic:
+		for key, value in invalid_dic.items():
+			flash('Invalid User ' + value + ' at slot ' + key + '!')
+	return "Random Stuff"
 
 
 @app.route('/schedule_range', methods=['GET', 'POST'])
@@ -253,15 +274,17 @@ def date_schedule(date=None):
 				'5', '6', '7']
 		orders = ['0', '1', '2', '3', '4']
 		users_dic = get_date(date)
-		print(users_dic)
+		#print(users_dic)
 		date_list = [(convert_to_date(date, 1)-datetime.timedelta(days=1)).strftime('%m-%d-%Y'),
-					date, (convert_to_date(date, 1)+datetime.timedelta(days=1)).strftime('%m-%d-%Y')]
+					convert_to_date(date, 1).strftime('%m-%d-%Y'),
+					(convert_to_date(date, 1)+datetime.timedelta(days=1)).strftime('%m-%d-%Y')]
 		submit = False
 		if convert_to_date(date, 1) >= datetime.date.today():
 			submit = True
+		current_name = current_user.first_name + ' ' + current_user.last_name
 		return render_template('date_schedule.html', date = date_list,
 								hours=hours, orders=orders, users=users_dic,
-								submit=submit)
+								submit=submit, current_name=current_name)
 
 
 @app.route('/test', methods=['POST'])

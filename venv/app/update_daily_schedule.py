@@ -1,5 +1,5 @@
 from app.model import Timeslot, User, DateTimeSlot
-from app.update_schedule import get_email_to_name
+from app.update_schedule import get_email_to_name, get_name_to_email
 from app import db
 import datetime
 
@@ -18,6 +18,8 @@ def convert_to_date(date, version):
 
 
 def get_update_list(old_start_day, old_end_day, new_start_day, new_end_day):
+    """ This function returns a list of dates that should be deleted from the
+    database and a list of dates that should be added to the database. """
     delete_list = []
     add_list = []
     all_date = DateTimeSlot.query.all()
@@ -43,6 +45,8 @@ def get_update_list(old_start_day, old_end_day, new_start_day, new_end_day):
 
 
 def update_daily(old_start, old_end, new_start, new_end):
+    """ This function add or delete dates accroding to the old and new
+    date range. """
     hours = range(24)
     orders = range(5)
     temp_list = get_update_list(old_start, old_end, new_start, new_end)
@@ -65,8 +69,9 @@ def update_daily(old_start, old_end, new_start, new_end):
 
 
 def get_date(date):
+    """ This function retrieves the data from DateTimeSlot database. """
     slots = DateTimeSlot.query.filter_by(date=date)
-    print(date)
+    #print(date)
     slots_dic = {}
     email_dic = get_email_to_name()
     for slot in slots:
@@ -75,6 +80,25 @@ def get_date(date):
             name = email_dic[slot.user_id]
             slots_dic[key] = [slot.open, name]
         else:
-            slots_dic[key] = [slot.open, slot.user_id]
-    print(slots_dic)
+            week = convert_to_date(date, 1).weekday()
+            slot_week = Timeslot.query.filter_by(week=week, time=slot.time, index=slot.index).first()
+            if slot_week.user_id:
+                slots_dic[key] = [slot.open, None, True]
+            else:
+                slots_dic[key] = [slot.open, None, False]
+            """ The True and False above indicate if this slot is permanently
+            or temporarily open. """
+    #print(slots_dic)
     return slots_dic
+
+
+def update_date_schedule(slots_dic, date):
+    email_dic = get_name_to_email()
+    for key, value in slots_dic.items():
+        time, index = key.split('/')
+        slot = DateTimeSlot.query.filter_by(date=date, time=time, index=index).first()
+        if value:
+            slot.user_id = email_dic[value]
+        else:
+            slot.user_id = None
+    db.session.commit()

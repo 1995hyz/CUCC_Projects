@@ -95,7 +95,7 @@ function get_schedule_change(e){
 }
 
 
-function get_schedule_change_operator(e){
+function get_schedule_change_operator(e, identifier){
   event = e;
   slots_dic = {}
   var i, j;
@@ -113,35 +113,49 @@ function get_schedule_change_operator(e){
       }
     }
   }
-  switch (document.getElementById("week_index").textContent) {
-    case "Tuesday":
-      slots_dic["week"] = 1;
-      break;
-    case "Wednesday":
-      slots_dic["week"] = 2;
-      break;
-    case "Thursday":
-      slots_dic["week"] = 3;
-      break;
-    case "Friday":
-      slots_dic["week"] = 4;
-      break;
-    case "Saturday":
-      slots_dic["week"] = 5;
-      break;
-    case "Sunday":
-      slots_dic["week"] = 6;
-      break;
-    default:
-      slots_dic['week'] = 0;
+  if (identifier=='week'){
+    switch (document.getElementById("week_index").textContent) {
+      case "Tuesday":
+        slots_dic["week"] = 1;
+        break;
+      case "Wednesday":
+        slots_dic["week"] = 2;
+        break;
+      case "Thursday":
+        slots_dic["week"] = 3;
+        break;
+      case "Friday":
+        slots_dic["week"] = 4;
+        break;
+      case "Saturday":
+        slots_dic["week"] = 5;
+        break;
+      case "Sunday":
+        slots_dic["week"] = 6;
+        break;
+      default:
+        slots_dic['week'] = 0;
+      }
+    console.log(slots_dic);
+    // ajax the JSON to the server
+    var json = JSON.stringify(slots_dic);
+    $.post("/changed_schedule", {data:json}).done(function(response){
+      location.reload();
+    });
+    event.preventDefault();
   }
-  console.log(slots_dic);
-// ajax the JSON to the server
-  var json = JSON.stringify(slots_dic);
-  $.post("/changed_schedule", {data:json}).done(function(response){
-    location.reload();
-  });
-  event.preventDefault();
+  else if (identifier=='date'){
+    slots_dic["date"] = document.getElementById("date_index").textContent;
+    console.log(slots_dic);
+    var json = JSON.stringify(slots_dic);
+    $.post("/changed_date", {data:json}).done(function(response){
+      location.reload();
+    });
+    event.preventDefault();
+  }
+  else{
+    console.log("Shouldn't be here.")
+  }
 }
 
 
@@ -158,7 +172,14 @@ function confirm_change(e, form_index){
       break;
     case 2:
       if (ok){
-        get_schedule_change_operator(evt);
+        get_schedule_change_operator(evt, 'week');
+        return true;
+      }
+      return false;
+      break;
+    case 3:
+      if (ok){
+        get_schedule_change_operator(evt, 'date');
         return true;
       }
       return false;
