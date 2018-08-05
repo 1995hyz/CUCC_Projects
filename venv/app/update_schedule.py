@@ -20,6 +20,10 @@ def get_email_to_name():
     return email_dic
 
 
+from app.update_daily_schedule import update_from_current
+# Because update_daily_schedule depends on the two functions above
+
+
 def update_week(open_dict, week):
     for key, value in open_dict.items():
         hour, index = key.split('/')
@@ -32,6 +36,7 @@ def update_week(open_dict, week):
 
 
 def update_week_schedule(slots_dic, week):
+    """ This function updates the permanent shedule in Timeslot database. """
     email_dic = get_email_to_name()
     name_dic = get_name_to_email()
     name_dic[None] = None
@@ -45,11 +50,14 @@ def update_week_schedule(slots_dic, week):
         if value != email_dic[slot.user_id]:
             if value in name_dic:
                 if value is None:
-                    slot.user_id = name_dic[value]
+                    update_from_current(week, {key: None})
+                    slot.user_id = name_dic[value] # None
                     db.session.commit()
                 else:
                     user = User.query.filter_by(username=name_dic[value]).first()
-                    if (user.privilege and index == str(0)) or (not user.privilege and index != 0): #Check if the new user is supervisor or operator
+                    if (user.privilege and index == str(0)) or (not user.privilege and index != 0):
+                        # Check if the new user is supervisor or operator
+                        update_from_current(week, {key: name_dic[value]})
                         slot.user_id = name_dic[value]
                         db.session.commit()
                     else:

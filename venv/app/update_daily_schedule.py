@@ -1,4 +1,4 @@
-from app.model import Timeslot, User, DateTimeSlot
+from app.model import Timeslot, User, DateTimeSlot, ScheduleRange
 from app.update_schedule import get_email_to_name, get_name_to_email
 from app import db
 import datetime
@@ -102,3 +102,29 @@ def update_date_schedule(slots_dic, date):
         else:
             slot.user_id = None
     db.session.commit()
+
+
+def update_from_current(week, slot_dic):
+    """ This function expects a week index (0-6) to update DateTimeSlot
+    database from current date to the end of schedule period. """
+    date = datetime.date.today()
+    schedule_range = ScheduleRange.query.all()[0]
+    end_date = convert_to_date(schedule_range.end_date, 0)
+    for key, value in slot_dic.items():
+        time, index = key.split('/')
+        user_id = value
+    while True:
+        if date.weekday() == week:
+            break
+        else:
+            date = date + datetime.timedelta(days=1)
+    while True:
+        if date <= end_date:
+            slot = DateTimeSlot.query.filter_by(date=date.strftime('%Y-%m-%d'),
+                                                time=time, index=index).first()
+            slot.user_id = user_id
+            date = date + datetime.timedelta(weeks=1)
+            continue
+        db.session.commit()
+        break
+    slot = DateTimeSlot.query.filter_by()

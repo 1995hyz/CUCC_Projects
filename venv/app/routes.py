@@ -146,8 +146,14 @@ def schedule_page_operator(week):
 	orders = ['0', '1', '2', '3', '4']
 	week_list = [WEEK_LIST[(current_weekday-1)%7], WEEK_LIST[current_weekday], WEEK_LIST[(current_weekday+1)%7]]
 	current_name = current_user.first_name + ' ' + current_user.last_name
-	return render_template('schedule_operator.html',week=week_list, users=users_dic,
-	 						hours=hours, orders=orders, current_name=current_name)
+	if current_user.privilege:
+		return render_template('schedule_supervisor.html',week=week_list,
+								users=users_dic, hours=hours, orders=orders,
+								current_name=current_name)
+	else:
+		return render_template('schedule_operator.html',week=week_list,
+								users=users_dic, hours=hours, orders=orders,
+								current_name=current_name)
 
 
 @app.route('/week_schedule/<week>', methods=['GET', 'POST'])
