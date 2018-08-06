@@ -49,7 +49,24 @@
   {% for hour in hours %}
   <tr>
     <th>{{ hour }}:00</th>
-    {% for order in orders %}
+    {% if users[hour+'/'+orders[0]][0] %}
+      {% if users[hour+'/'+orders[0]][1] is none %}
+        {% if users[hour+'/'+orders[0]][2] %}
+        <th><input id="{{ hour }}/{{ orders[0] }}" name="{{hour}}-slots-disabled"
+                    type="text" value="" style="background-color: #ecf312  ;" /></th>
+        {% else %}
+        <th><input id="{{ hour }}/{{ orders[0] }}" name="{{hour}}-slots-disabled"
+                    type="text" value="" style="background-color: #41ebf4;" /></th>
+        {% endif %}
+      {% else %}
+      <th><input id="{{ hour }}/{{ orders[0] }}" name="{{hour}}-slots-disabled"
+                  type="text" value="{{ users[hour+'/'+orders[0]][1] }}"
+                  style="background-color: #a1f442;" /></th>
+      {% endif %}
+    {% else %}
+    <th><input id="{{ hour }}/{{ orders[0] }}" name="{{hour}}-slots-disabled" type="text" value="" /></th>
+    {% endif %}
+    {% for order in orders[1:] %}
     {% if users[hour+'/'+order][0] %}
       {% if users[hour+'/'+order][1] is none %}
         {% if users[hour+'/'+order][2] %}

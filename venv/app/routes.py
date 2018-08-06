@@ -288,9 +288,14 @@ def date_schedule(date=None):
 		if convert_to_date(date, 1) >= datetime.date.today():
 			submit = True
 		current_name = current_user.first_name + ' ' + current_user.last_name
-		return render_template('date_schedule.html', date = date_list,
-								hours=hours, orders=orders, users=users_dic,
-								submit=submit, current_name=current_name)
+		if current_user.privilege:
+			return render_template('date_schedule_supervisor.html', date = date_list,
+									hours=hours, orders=orders, users=users_dic,
+									submit=submit, current_name=current_name)
+		else:
+			return render_template('date_schedule_operator.html', date = date_list,
+									hours=hours, orders=orders, users=users_dic,
+									submit=submit, current_name=current_name)
 
 
 @app.route('/test', methods=['POST'])
