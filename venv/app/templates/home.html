@@ -11,7 +11,11 @@
     </tr>
     <tr>
       <th>
+        {% if privilege %}
+        <a href="/schedule_supervisor/Monday">Permanently Taking / Dropping Hours</a>
+        {% else %}
         <a href="/schedule_operator/Monday">Permanently Taking / Dropping Hours</a>
+        {% endif %}
       </th>
     </tr>
 {% endblock %}

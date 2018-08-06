@@ -21,7 +21,8 @@ WEEK_LIST = ['Monday', 'Tuesday', 'Wednesday', 'Thursday',
 @app.route('/home')
 @login_required
 def home():
-	return render_template('home.html')
+	privilege = current_user.privilege
+	return render_template('home.html', privilege=privilege)
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -136,6 +137,7 @@ def schedule_page(week):
 
 
 @app.route('/schedule_operator/<week>', methods=['GET', 'POST'])
+@app.route('/schedule_supervisor/<week>', methods=['GET', 'POST'])
 @login_required
 def schedule_page_operator(week):
 	current_weekday = WEEK_MAP[week]
