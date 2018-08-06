@@ -28,11 +28,12 @@ def update_week(open_dict, week):
     for key, value in open_dict.items():
         hour, index = key.split('/')
         slot = Timeslot.query.filter_by(week=week, index=index, time=hour).first()
-        if slot.open and value:
+        if slot.open == value:
             pass
         else:
             slot.open = value
             db.session.commit()
+            update_from_current(week, {key: value}, 'open')
 
 
 def update_week_schedule(slots_dic, week):
@@ -50,14 +51,14 @@ def update_week_schedule(slots_dic, week):
         if value != email_dic[slot.user_id]:
             if value in name_dic:
                 if value is None:
-                    update_from_current(week, {key: None})
+                    update_from_current(week, {key: None}, 'user_id')
                     slot.user_id = name_dic[value] # None
                     db.session.commit()
                 else:
                     user = User.query.filter_by(username=name_dic[value]).first()
                     if (user.privilege and index == str(0)) or (not user.privilege and index != 0):
                         # Check if the new user is supervisor or operator
-                        update_from_current(week, {key: name_dic[value]})
+                        update_from_current(week, {key: name_dic[value]}, 'user_id')
                         slot.user_id = name_dic[value]
                         db.session.commit()
                     else:

@@ -104,15 +104,16 @@ def update_date_schedule(slots_dic, date):
     db.session.commit()
 
 
-def update_from_current(week, slot_dic):
+def update_from_current(week, slot_dic, parameter):
     """ This function expects a week index (0-6) to update DateTimeSlot
     database from current date to the end of schedule period. """
-    date = datetime.date.today()
+    date = datetime.date.today() + datetime.timedelta(days=1)
+    # Any permanet change takes effects start from the next week
     schedule_range = ScheduleRange.query.all()[0]
     end_date = convert_to_date(schedule_range.end_date, 0)
     for key, value in slot_dic.items():
         time, index = key.split('/')
-        user_id = value
+        change_parameter = value
     while True:
         if date.weekday() == week:
             break
@@ -122,7 +123,12 @@ def update_from_current(week, slot_dic):
         if date <= end_date:
             slot = DateTimeSlot.query.filter_by(date=date.strftime('%Y-%m-%d'),
                                                 time=time, index=index).first()
-            slot.user_id = user_id
+            if parameter == 'user_id':
+                slot.user_id = change_parameter
+            elif parameter == 'open':
+                slot.open = change_parameter
+            else:
+                raise ValueError('Timeslot database doesn\'t have column called ' + str(parameter))
             date = date + datetime.timedelta(weeks=1)
             continue
         db.session.commit()
