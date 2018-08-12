@@ -6,6 +6,7 @@ from flask_login import current_user , login_user, logout_user, login_required
 from app.model import User, Timeslot, ScheduleRange
 from app.update_schedule import update_week, get_week, get_open, update_week_schedule
 from app.update_daily_schedule import update_date_schedule
+from app.sign_in import get_sign_in
 from werkzeug.urls import url_parse
 from app.update_daily_schedule import convert_to_date, update_daily, get_date
 
@@ -298,6 +299,23 @@ def date_schedule(date=None):
 			return render_template('date_schedule_operator.html', date = date_list,
 									hours=hours, orders=orders, users=users_dic,
 									submit=submit, current_name=current_name)
+
+@app.route('/sign_in')
+@login_required
+def current_hour_re():
+	now = datetime.datetime.now()
+	parameter = '/' + str(now.month) + '-' + str(now.day) + '-' +\
+				str(now.year) + '/' + str(now.hour)
+	return redirect('/sign_in' + parameter)
+
+
+@app.route('/sign_in/<date>/<hour>')
+@login_required
+def current_hour(date, hour):
+	date_str = convert_to_date(date, 0).strftime('%Y-%m-%d')
+	slot_list = get_sign_in(date=date_str, hour=int(hour))
+	print(slot_list)
+	return render_template('sign_in.html', slot_list=slot_list)
 
 
 @app.route('/test', methods=['POST'])

@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+
+{% block app_content %}
+<form action="" method="post">
+  <table>
+    <tr>
+      <th>Name: </th>
+      {% for slot in slot_list %}
+      {% if slot['name'] is none %}
+      <th><input id="{{ slot['index'] }}" value="" disabled /></th>
+      {% else %}
+      <th><input id="{{ slot['index'] }}" value="{{ slot['name'] }}" disabled /></th>
+      {% endif %}
+      {% endfor %}
+    </tr>
+    <tr>
+      <th>Sign: </th>
+      {% for slot in slot_list %}
+      {% if slot['signed'] is none %}
+      <th><input id="{{ slot['index'] }}" value="" /></th>
+      {% else %}
+      <th><input id="{{ slot['index'] }}" value="{{ slot['signed'] }}" /></th>
+      {% endif %}
+      {% endfor %}
+    </tr>
+    <tr>
+      <th>Replace: </th>
+      {% for slot in slot_list %}
+      {% if slot['replace'] is none %}
+      <th><input id="{{ slot['index'] }}" value="" /></th>
+      {% else %}
+      <th><input id="{{ slot['index'] }}" value="{{ slot['replace'] }}" /></th>
+      {% endif %}
+      {% endfor %}
+    </tr>
+    <tr>
+      <th>Approve: </th>
+      {% for slot in slot_list %}
+      {% if slot['approved'] is none %}
+      <th><input id="{{ slot['index'] }}" value="" /></th>
+      {% else %}
+      <th><input id="{{ slot['index'] }}" value="{{ slot['approved'] }}" /></th>
+      {% endif %}
+      {% endfor %}
+    </tr>
+  </table>
+  <input id="submit" type="submit" onclick=""
+          name="submit" value="Submit" />
+</form>
+{% endblock %}

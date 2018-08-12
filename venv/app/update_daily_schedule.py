@@ -107,7 +107,7 @@ def update_date_schedule(slots_dic, date):
 def update_from_current(week, slot_dic, parameter):
     """ This function expects a week index (0-6) to update DateTimeSlot
     database from current date to the end of schedule period. """
-    date = datetime.date.today() + datetime.timedelta(days=1)
+    date = datetime.date.today() #+ datetime.timedelta(days=1)
     # Any permanet change takes effects start from the next week
     schedule_range = ScheduleRange.query.all()[0]
     end_date = convert_to_date(schedule_range.end_date, 0)

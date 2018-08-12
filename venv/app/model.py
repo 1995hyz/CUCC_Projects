@@ -53,6 +53,22 @@ class DateTimeSlot(db.Model):
     user_id = db.Column(db.String(64))
 
 
+class SignInSlot(db.Model):
+    """ Unlike DataTimeSlot, this class will construct objects upon the
+    first time in an hour when a user accesses the sign_in page. All datebase
+    in this datebase will be kept six month prior to the current date. No
+    matther what schedule range is. """
+    id = db.Column(db.Integer, primary_key=True)
+    index = db.Column(db.Integer) # 0 - 4, Index 0 is for supervisor
+    time = db.Column(db.Integer) # 0 - 23
+    min_sec = db.Column(db.Integer) # 0000 - 6060 (MMSS)
+    date = db.Column(db.String(32)) # MM-DD-YYYY
+    user_id = db.Column(db.String(64))
+    signed = db.Column(db.String(64))
+    replace = db.Column(db.String(64))
+    approved = db.Column(db.String(64))
+
+
 class ScheduleRange(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     start_date = db.Column(db.String(16)) # MM/DD/YYYY
