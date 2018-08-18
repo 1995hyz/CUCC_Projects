@@ -20,6 +20,24 @@ def get_email_to_name():
     return email_dic
 
 
+def get_name_to_id():
+    name_dic = {}
+    users = User.query.all()
+    for user in users:
+        full_name = user.first_name + ' ' + user.last_name
+        name_dic[full_name] = user.id
+    return name_dic
+
+
+def get_id_to_name():
+    email_dic = {}
+    users = User.query.all()
+    for user in users:
+        full_name = user.first_name + ' ' + user.last_name
+        email_dic[user.username] = full_name
+    return email_dic
+
+
 from app.update_daily_schedule import update_from_current
 # Because update_daily_schedule depends on the two functions above
 

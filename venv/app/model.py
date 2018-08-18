@@ -63,16 +63,16 @@ class SignInSlot(db.Model):
     time = db.Column(db.Integer) # 0 - 23
     min_sec = db.Column(db.Integer) # 0000 - 6060 (MMSS)
     date = db.Column(db.String(32)) # MM-DD-YYYY
-    user_id = db.Column(db.String(64))
-    signed = db.Column(db.String(64))
-    replace = db.Column(db.String(64))
-    approved = db.Column(db.String(64))
+    user_id = db.Column(db.Integer)
+    signed = db.Column(db.Integer)
+    replace = db.Column(db.Integer)
+    approved = db.Column(db.Integer)
 
 
 class ScheduleRange(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    start_date = db.Column(db.String(16)) # MM/DD/YYYY
-    end_date = db.Column(db.String(16)) # MM/DD/YYYY
+    start_date = db.Column(db.String(16)) # MM-DD-YYYY
+    end_date = db.Column(db.String(16)) # MM-DD-YYYY
 
 
 @login.user_loader
