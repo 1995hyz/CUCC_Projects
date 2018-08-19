@@ -1,5 +1,5 @@
 from app.model import Timeslot, User, DateTimeSlot, ScheduleRange
-from app.update_schedule import get_email_to_name, get_name_to_email
+from app.update_schedule import get_id_to_name, get_name_to_id
 from app import db
 import datetime
 
@@ -22,6 +22,9 @@ def get_update_list(old_start_day, old_end_day, new_start_day, new_end_day):
     database and a list of dates that should be added to the database. """
     delete_list = []
     add_list = []
+    if old_start_day is None and old_end_day is None:
+        old_start_day = new_start_day - datetime.timedelta(days=2)
+        old_end_day = new_end_day - datetime.timedelta(days=1)
     all_date = DateTimeSlot.query.all()
     for single_date in all_date:
         single_day = convert_to_date(single_date.date, 1)
@@ -34,13 +37,7 @@ def get_update_list(old_start_day, old_end_day, new_start_day, new_end_day):
         if position > old_end_day or position < old_start_day:
             print('Add: ' + str(position))
             add_list.append(position)
-        try:
-            position = position.replace(day=position.day+1)
-        except ValueError:
-            try:
-                position = position.replace(month=position.month+1, day=1)
-            except ValueError:
-                position = position.replace(year=position.year+1, month=1, day=1)
+            position = position + datetime.timedelta(days=1)
     return [add_list, delete_list]
 
 
@@ -73,11 +70,11 @@ def get_date(date):
     slots = DateTimeSlot.query.filter_by(date=date)
     #print(date)
     slots_dic = {}
-    email_dic = get_email_to_name()
+    id_dic = get_id_to_name()
     for slot in slots:
         key = str(slot.time) + '/' + str(slot.index)
         if slot.user_id is not None:
-            name = email_dic[slot.user_id]
+            name = id_dic[slot.user_id]
             slots_dic[key] = [slot.open, name]
         else:
             week = convert_to_date(date, 1).weekday()
@@ -93,12 +90,12 @@ def get_date(date):
 
 
 def update_date_schedule(slots_dic, date):
-    email_dic = get_name_to_email()
+    id_dic = get_name_to_id()
     for key, value in slots_dic.items():
         time, index = key.split('/')
         slot = DateTimeSlot.query.filter_by(date=date, time=time, index=index).first()
         if value:
-            slot.user_id = email_dic[value]
+            slot.user_id = id_dic[value]
         else:
             slot.user_id = None
     db.session.commit()

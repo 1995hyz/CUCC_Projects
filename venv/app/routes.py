@@ -257,6 +257,7 @@ def changed_schedule_period():
 			else:
 				date_range = ScheduleRange(start_date=form.start_date.data.strftime('%m-%d-%Y'),
 											end_date=form.end_date.data.strftime('%m-%d-%Y'))
+				#update_daily(None, None, form.start_date.data, form.end_date.data)
 				db.session.add(date_range)
 				db.session.commit()
 		else:

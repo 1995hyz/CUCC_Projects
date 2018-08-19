@@ -1,6 +1,6 @@
 from app.model import SignInSlot, DateTimeSlot
 from app import db
-from app.update_schedule import get_email_to_name
+from app.update_schedule import get_id_to_name
 import datetime
 
 
@@ -36,7 +36,7 @@ def delete_sign_in(start_date, end_date):
 
 def get_sign_in(date, hour):
     slots = SignInSlot.query.filter_by(date=date, time=hour).all()
-    name_dic = get_email_to_name()
+    name_dic = get_id_to_name()
     name_dic[None] = None
     slot_list = []
     if len(slots) == 0:

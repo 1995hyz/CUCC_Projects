@@ -41,7 +41,7 @@ class Timeslot(db.Model):
     date = db.Column(db.String(32)) # MM-DD-YYYY, Not being used now
     week = db.Column(db.Integer) # 0 - 6
     open = db.Column(db.Boolean())
-    user_id = db.Column(db.String(64))
+    user_id = db.Column(db.Integer)
 
 
 class DateTimeSlot(db.Model):
@@ -50,7 +50,7 @@ class DateTimeSlot(db.Model):
     time = db.Column(db.Integer) # 0 - 23
     date = db.Column(db.String(32)) # MM-DD-YYYY
     open = db.Column(db.Boolean())
-    user_id = db.Column(db.String(64))
+    user_id = db.Column(db.Integer)
 
 
 class SignInSlot(db.Model):
