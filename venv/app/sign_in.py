@@ -47,10 +47,10 @@ def get_sign_in(date, hour):
             slots = SignInSlot.query.filter_by(date=date, time=hour).all()
     for slot in slots:
         temp = {}
-        temp['index'] = slot.index
+        temp['index'] = str(slot.index)
         temp['name'] = name_dic[slot.user_id]
-        temp['signed'] = slot.signed
-        temp['replace'] = slot.replace
-        temp['approved'] = slot.approved
+        temp['signed'] = name_dic[slot.signed]
+        temp['replace'] = name_dic[slot.replace]
+        temp['approved'] = name_dic[slot.approved]
         slot_list.append(temp)
     return slot_list

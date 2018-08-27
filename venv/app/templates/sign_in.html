@@ -1,25 +1,46 @@
 {% extends 'base.html' %}
 
+{% block head %}
+{{ super() }}
+  {% block scripts %}
+  <script src="{{url_for('.static', filename='confirm_change.js')}}"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+  {% endblock %}
+{% endblock%}
+
 {% block app_content %}
+<p id='time'>{{ time }}</p>
 <form action="" method="post">
   <table>
+    <tr hidden>
+      <th>Index: </th>
+      {% for slot in slot_list %}
+      <th name="index">{{ slot['index'] }}</th>
+      {% endfor %}
+    </tr>
     <tr>
       <th>Name: </th>
       {% for slot in slot_list %}
       {% if slot['name'] is none %}
-      <th><input id="{{ slot['index'] }}" value="" disabled /></th>
+      <th><input id="{{ slot['index'] + 'name' }}" value="" disabled /></th>
       {% else %}
-      <th><input id="{{ slot['index'] }}" value="{{ slot['name'] }}" disabled /></th>
+      <th><input id="{{ slot['index'] + 'name' }}" value="{{ slot['name'] }}" disabled /></th>
       {% endif %}
       {% endfor %}
     </tr>
     <tr>
       <th>Sign: </th>
       {% for slot in slot_list %}
-      {% if slot['signed'] is none %}
-      <th><input id="{{ slot['index'] }}" value="" /></th>
+      {% if slot['name'] == user %}
+        {% if slot['signed'] is none %}
+        <th><input id="{{ slot['index'] + 'signed'}}" value="" /></th>
+        {% else %}
+        <th><input id="{{ slot['index'] + 'signed'}}" value="{{ slot['signed'] }}" /></th>
+        {% endif %}
+      {% elif slot['signed'] is none %}
+      <th><input id="{{ slot['index'] + 'signed'}}" value="" disabled/></th>
       {% else %}
-      <th><input id="{{ slot['index'] }}" value="{{ slot['signed'] }}" /></th>
+      <th><input id="{{ slot['index'] + 'signed'}}" value="{{ slot['signed'] }}" disabled /></th>
       {% endif %}
       {% endfor %}
     </tr>
@@ -27,9 +48,13 @@
       <th>Replace: </th>
       {% for slot in slot_list %}
       {% if slot['replace'] is none %}
-      <th><input id="{{ slot['index'] }}" value="" /></th>
+        {% if slot['name'] == user %}
+        <th><input id="{{ slot['index'] + 'replaced'}}" value="" disabled /></th>
+        {% else %}
+        <th><input id="{{ slot['index'] + 'replaced'}}" value="" /></th>
+        {% endif %}
       {% else %}
-      <th><input id="{{ slot['index'] }}" value="{{ slot['replace'] }}" /></th>
+      <th><input id="{{ slot['index'] + 'replaced'}}" value="{{ slot['replace'] }}" disabled /></th>
       {% endif %}
       {% endfor %}
     </tr>
@@ -37,14 +62,14 @@
       <th>Approve: </th>
       {% for slot in slot_list %}
       {% if slot['approved'] is none %}
-      <th><input id="{{ slot['index'] }}" value="" /></th>
+      <th><input id="{{ slot['index'] + 'approved'}}" value="" disabled /></th>
       {% else %}
-      <th><input id="{{ slot['index'] }}" value="{{ slot['approved'] }}" /></th>
+      <th><input id="{{ slot['index'] + 'approved'}}" value="{{ slot['approved'] }}" disabled /></th>
       {% endif %}
       {% endfor %}
     </tr>
   </table>
-  <input id="submit" type="submit" onclick=""
+  <input id="submit" type="submit" onclick="return confirm_change(event, 4)"
           name="submit" value="Submit" />
 </form>
 {% endblock %}

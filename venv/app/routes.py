@@ -310,13 +310,24 @@ def current_hour_re():
 	return redirect('/sign_in' + parameter)
 
 
-@app.route('/sign_in/<date>/<hour>')
+@app.route('/sign_in/<date>/<hour>', methods=['GET', 'POST'])
 @login_required
 def current_hour(date, hour):
 	date_str = convert_to_date(date, 0).strftime('%Y-%m-%d')
 	slot_list = get_sign_in(date=date_str, hour=int(hour))
-	print(slot_list)
-	return render_template('sign_in.html', slot_list=slot_list)
+	current_name = current_user.first_name + ' ' + current_user.last_name
+	print(current_name)
+	return render_template('sign_in.html', slot_list=slot_list,
+	 						user=current_name, time=date+'-'+hour)
+
+
+@app.route('/changed_sign_in/<date>/<hour>', methods=['GET', 'POST'])
+@login_required
+def changed_sign_in(date, hour):
+	data = request.form['data']
+	decode = json.loads(data)
+	print(decode)
+	return "Random Stuff"
 
 
 @app.route('/test', methods=['POST'])

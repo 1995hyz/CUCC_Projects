@@ -159,6 +159,29 @@ function get_schedule_change_operator(e, identifier){
 }
 
 
+function get_sign_in(e){
+  event = e;
+  var indexes = document.getElementsByName("index");
+  var i;
+  slots_dic = {};
+  for(i=0; i<indexes.length; i++){
+    num_string = i.toString();
+    slots_dic[num_string+"-signed"] = document.getElementById(num_string+"signed").value;
+    slots_dic[num_string+"-replaced"] = document.getElementById(num_string+"replaced").value;
+  }
+  slots_dic["time"] = document.getElementById('time').textContent;
+  times = slots_dic["time"].split("-")
+  sub_url = times[0] + "-" + times[1] + "-" + times[2] + "/" + times[3]
+  console.log(slots_dic);
+  // ajax the JSON to the server
+  var json = JSON.stringify(slots_dic);
+  $.post("/changed_sign_in/", {data:json}).done(function(response){
+    location.reload();
+  });
+  event.preventDefault();
+}
+
+
 function confirm_change(e, form_index){
   evt = e || window.event
   var ok = confirm('Are you sure to change the current schedule?');
@@ -180,6 +203,13 @@ function confirm_change(e, form_index){
     case 3:
       if (ok){
         get_schedule_change_operator(evt, 'date');
+        return true;
+      }
+      return false;
+      break;
+    case 4:
+      if(ok){
+        get_sign_in(evt);
         return true;
       }
       return false;
